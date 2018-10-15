@@ -146,20 +146,21 @@ public class StreamTest {
     public void testMin() {
         Stream<Integer> source = Stream.of(2, 5, 1, 4, 3);
         Optional<Integer> result = source.min((i1, i2) -> i1 - i2);
-        Assert.assertEquals(Integer.valueOf(1), result.get());
+        result.ifPresent(i -> Assert.assertEquals(Integer.valueOf(1), i));
     }
 
     @Test
     public void testMax() {
         Stream<Integer> source = Stream.of(2, 5, 1, 4, 3);
         Optional<Integer> result = source.max((i1, i2) -> i1 - i2);
-        Assert.assertEquals(Integer.valueOf(5), result.get());
+        result.ifPresent(i -> Assert.assertEquals(Integer.valueOf(5), i));
     }
 
     @Test
     public void testFindFirst() {
         Stream<String> source = Stream.of("Bangkok", "Lisbon", "Atlanta", "Madrid", "London");
-        Optional<String> result = source.filter(s -> s.startsWith("L")).findFirst();
+        Optional<String> result = source.filter(s -> s.startsWith("L"))
+                .findFirst();
         Assert.assertEquals("Lisbon", result.get());
     }
 
