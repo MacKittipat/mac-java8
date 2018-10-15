@@ -280,4 +280,30 @@ public class StreamTest {
         Assert.assertEquals(2.57, intSumStat.getAverage(), 0.01);
     }
 
+    // Reduce
+
+    @Test
+    public void testReduce() {
+        Stream<Integer> source = Stream.of(1, 2, 3, 4);
+        Integer result = source.reduce(0, (i1, i2) -> i1 + i2);
+        Assert.assertEquals(10, result.intValue());
+    }
+
+    @Test
+    public void testReduceString() {
+        Stream<String> source = Stream.of("A", "BB", "CCC");
+        String result = source.reduce("", (i1, i2) -> i1 + i2);
+        Assert.assertEquals("ABBCCC", result);
+    }
+
+    @Test
+    public void testReduceStringSumLength() {
+        Stream<String> source = Stream.of("A", "BB", "CCC");
+        Integer result = source.reduce(
+                0,
+                (total, word) -> total + word.length(),
+                (i1, i2) -> i1 + i2
+        );
+        Assert.assertEquals(6, result.intValue());
+    }
 }
