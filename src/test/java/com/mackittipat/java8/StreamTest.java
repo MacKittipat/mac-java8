@@ -5,11 +5,20 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.IntSummaryStatistics;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StreamTest {
+
+    // Create
 
     @Test
     public void testCreation() {
@@ -23,6 +32,8 @@ public class StreamTest {
         List<String> wordList = Arrays.asList("Alpha", "Beta", "Gramma", "Delta", "Epsilon");
         Stream<String> sourceList = wordList.stream();
     }
+
+    // Transform
 
     @Test
     public void testFilter() {
@@ -142,6 +153,8 @@ public class StreamTest {
                 .toArray();
     }
 
+    // Reduction
+
     @Test
     public void testMin() {
         Stream<Integer> source = Stream.of(2, 5, 1, 4, 3);
@@ -170,4 +183,101 @@ public class StreamTest {
         boolean result = source.anyMatch(s -> s.startsWith("C"));
         Assert.assertFalse(result);
     }
+
+    // Collecting result
+
+    @Test
+    public void testToArray() {
+        Stream<String> source = Stream.of("Bangkok", "Lisbon", "Atlanta", "Madrid", "London");
+        String[] results = source.toArray(String[]::new);
+        Assert.assertArrayEquals(new String[] {"Bangkok", "Lisbon", "Atlanta", "Madrid", "London"}, results);
+    }
+
+    @Test
+    public void testCollectToList() {
+        Stream<String> source = Stream.of("Bangkok", "Lisbon", "Atlanta", "Madrid", "London");
+        List<String> results = source.collect(Collectors.toList());
+        Assert.assertArrayEquals(new String[] {"Bangkok", "Lisbon", "Atlanta", "Madrid", "London"}, results.toArray());
+    }
+
+    @Test
+    public void testCollectToSet() {
+        Stream<String> source = Stream.of("Bangkok", "Lisbon", "Atlanta", "Madrid", "London");
+        // Collectors.toSet() return HashSet, no guarantee insertion order
+        Set<String> results = source.collect(Collectors.toSet());
+        Assert.assertEquals(5, results.size());
+    }
+
+    @Test
+    public void testCollectToMap() {
+        Stream<String> source = Stream.of("Bangkok", "Lisbon", "Atlanta", "Madrid", "Amsterdam");
+        Map<String, Integer> results = source.collect(
+                Collectors.toMap(
+                        k -> k,
+                        v -> v.length()
+                ));
+        Assert.assertEquals(5, results.size());
+        Assert.assertEquals(7, results.get("Bangkok").intValue());
+        Assert.assertEquals(6, results.get("Lisbon").intValue());
+        Assert.assertEquals(7, results.get("Atlanta").intValue());
+        Assert.assertEquals(6, results.get("Madrid").intValue());
+        Assert.assertEquals(9, results.get("Amsterdam").intValue());
+    }
+
+    @Test
+    public void testCollectToMapFunctionIdentity() {
+        Stream<String> source = Stream.of("Paris", "Madrid", "Bangkok", "Amsterdam");
+        Map<Integer, String> results = source.collect(
+                Collectors.toMap(
+                        k -> k.length(),
+                        Function.identity() // Return input argument, which is City name
+                ));
+        Assert.assertEquals(4, results.size());
+        Assert.assertEquals("Paris", results.get(5));
+        Assert.assertEquals("Madrid", results.get(6));
+        Assert.assertEquals("Bangkok", results.get(7));
+        Assert.assertEquals("Amsterdam", results.get(9));
+    }
+
+    @Test
+    public void testCollectToMapDuplicateKey() {
+        Stream<String> source = Stream.of("Bangkok", "Lisbon", "Atlanta", "Madrid", "Amsterdam");
+        Map<Integer, String> results = source.collect(
+                Collectors.toMap(
+                        k -> k.length(),
+                        v -> v,
+                        (e, n) -> e // If key duplicate, don't change value of key.
+                ));
+
+        Assert.assertEquals(3, results.size());
+        Assert.assertEquals("Lisbon", results.get(6));
+        Assert.assertEquals("Bangkok", results.get(7));
+        Assert.assertEquals("Amsterdam", results.get(9));
+    }
+
+    @Test
+    public void testCollectToCollection() {
+        Stream<String> source = Stream.of("Bangkok", "Lisbon", "Atlanta", "Madrid", "London");
+        // LinkedHashSet guarantee insertion order
+        Set<String> results = source.collect(Collectors.toCollection(LinkedHashSet::new));
+        Assert.assertArrayEquals(new String[] {"Bangkok", "Lisbon", "Atlanta", "Madrid", "London"}, results.toArray());
+    }
+
+    @Test
+    public void testCollectString() {
+        Stream<String> source = Stream.of("A", "B", "C", "D");
+        String result = source.collect(Collectors.joining());
+        Assert.assertEquals("ABCD", result);
+    }
+
+    @Test
+    public void testCollectSummarizingInt() {
+        Stream<Integer> source = Stream.of(1, 2, 2, 3, 3, 3, 4);
+        IntSummaryStatistics intSumStat = source.collect(Collectors.summarizingInt(Integer::intValue));
+        Assert.assertEquals(7, intSumStat.getCount());
+        Assert.assertEquals(1, intSumStat.getMin());
+        Assert.assertEquals(4, intSumStat.getMax());
+        Assert.assertEquals(2.57, intSumStat.getAverage(), 0.01);
+    }
+
 }
