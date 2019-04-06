@@ -322,10 +322,4 @@ public class StreamTest {
         Assert.assertEquals(1, intList.get(0).intValue());
         Assert.assertEquals(9, intList.get(8).intValue());
     }
-
-    @Test
-    public void test() {
-        int[] statues = new int[] {6, 2, 3, 8};
-        IntSummaryStatistics intSumStat = Arrays.stream(statues).summaryStatistics();
-    }
 }
