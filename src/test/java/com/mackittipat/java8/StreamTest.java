@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class StreamTest {
@@ -305,4 +306,15 @@ public class StreamTest {
         );
         Assert.assertEquals(6, result.intValue());
     }
+
+    // IntStream
+
+    @Test
+    public void testIntStream() {
+        List<Integer> intList = IntStream.range(1, 10).boxed().collect(Collectors.toList());
+        Assert.assertEquals(9, intList.size());
+        Assert.assertEquals(1, intList.get(0).intValue());
+        Assert.assertEquals(9, intList.get(8).intValue());
+    }
+
 }
