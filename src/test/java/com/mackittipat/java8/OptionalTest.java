@@ -17,11 +17,12 @@ public class OptionalTest {
         Optional<String> optString2 = Optional.of(null);
     }
 
+    @Test
     public void testOfNullable() {
         Optional<String> optString = Optional.ofNullable("Hello");
         Assert.assertTrue(optString.isPresent());
         Optional<String> optString2 = Optional.ofNullable(null);
-        Assert.assertTrue(optString2.isPresent());
+        Assert.assertFalse(optString2.isPresent());
     }
 
     // Produce an alternative
