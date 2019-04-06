@@ -278,6 +278,12 @@ public class StreamTest {
         Assert.assertEquals(1, intSumStat.getMin());
         Assert.assertEquals(4, intSumStat.getMax());
         Assert.assertEquals(2.57, intSumStat.getAverage(), 0.01);
+
+        intSumStat = Arrays.stream(new int[] {1, 2, 2, 3, 3, 3, 4}).summaryStatistics();
+        Assert.assertEquals(7, intSumStat.getCount());
+        Assert.assertEquals(1, intSumStat.getMin());
+        Assert.assertEquals(4, intSumStat.getMax());
+        Assert.assertEquals(2.57, intSumStat.getAverage(), 0.01);
     }
 
     // Reduce
@@ -317,4 +323,9 @@ public class StreamTest {
         Assert.assertEquals(9, intList.get(8).intValue());
     }
 
+    @Test
+    public void test() {
+        int[] statues = new int[] {6, 2, 3, 8};
+        IntSummaryStatistics intSumStat = Arrays.stream(statues).summaryStatistics();
+    }
 }
